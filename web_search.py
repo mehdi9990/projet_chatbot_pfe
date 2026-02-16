@@ -1,23 +1,34 @@
 import requests
-from bs4 import BeautifulSoup
+from urllib.parse import quote
 
-def search_web(query: str) -> str:
+def search_wikipedia(query: str) -> str:
+    """
+    Recherche la première phrase sur Wikipedia correspondant à la query.
+    """
+    url = "https://fr.wikipedia.org/w/api.php"
+    # Encode correctement la query
+    query_encoded = quote(query)
+    params = {
+        "action": "query",
+        "list": "search",
+        "srsearch": query_encoded,
+        "utf8": 1,
+        "format": "json",
+        "srlimit": 1
+    }
+
     try:
-        url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        response = requests.get(url, params=params, timeout=5)
+        # Vérifie que la réponse est bien JSON
+        try:
+            data = response.json()
+        except ValueError:
+            return "Error: Wikipedia did not return JSON."
 
-        response = requests.get(url, headers=headers, timeout=5)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        snippets = []
-        for g in soup.find_all('div'):
-            text = g.get_text().strip()
-            if text and len(text) > 50:
-                snippets.append(text)
-
-        return "\n\n".join(snippets[:3]) if snippets else "No web result found."
-
-    except:
-        return "No web result found."
+        if "query" in data and data["query"]["search"]:
+            snippet = data["query"]["search"][0]["snippet"]
+            snippet = snippet.replace("<span class=\"searchmatch\">", "").replace("</span>", "")
+            return snippet + "..."
+        return "No Wikipedia result."
+    except Exception as e:
+        return f"Error during Wikipedia search: {e}"
