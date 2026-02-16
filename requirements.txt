@@ -1,4 +1,14 @@
+numpy
+pandas
+
 langchain
+langchain-core
 langchain-ollama
 langchain-chroma
-pandas
+
+qdrant-client
+langchain-qdrant
+
+python-dotenv
+tqdm
+beautifulsoup4

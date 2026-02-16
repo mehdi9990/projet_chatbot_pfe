@@ -8,7 +8,7 @@ from web_search import search_web
 # MODELS
 # ===============================
 llama_model = OllamaLLM(model="llama3.2", base_url="http://127.0.0.1:11434")
-qwen_model = OllamaLLM(model="qwen:7b", base_url="http://127.0.0.1:11434")
+qwen_model = OllamaLLM(model="qwen:32b", base_url="http://127.0.0.1:11434")
 
 # ===============================
 # PROMPT TEMPLATE
